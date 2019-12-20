@@ -21,9 +21,10 @@ chao =  {
             // DEFININDO A ALTURA DO chao
             altura: 50,
             // DEFININDO A COR DO CHAO
-            cor: "#ffdf70",
+            cor: "#e8da78",
             // FUNCAO PARA DESENHAR O CHAO
-            desenha:    function(){
+            desenha:    function()
+                        {
                             // MUDANDO A COR DO CONTEXTO NO CHAO
                             ctx.fillStyle = this.cor;
                             // DESENHANDO O RETANGULO QUE REPRESENTA O CHAO
@@ -33,67 +34,88 @@ chao =  {
 
 
 // DECLARANDO AS PROPRIEDADES DO BLOCO        
-bloco = {
-    // COORDENADA x INICIAL DO BLOCO (LADO ESQUERDO)
-    x: 50,
-    // COORDENADA y INICIAL DO BLOCO (LADO DE CIMA)
-    y: 0,
-    // ALTURA DO BLOCO
-    altura: 50,
-    // LARGURA DO BLOCO
-    largura: 50,
-    // COR DO BLOCO
-    cor: "#ff4e4e",
-    // ATRIBUTO QUE REPRESENTA O VALOR DA GRAVIDADE
-    gravidade: 0.1,
-    // VELOCIDADE DE QUEDA DO BLOCO
-    velocidade: 0,
-    // FORÇA DO PULO DO BLOCO
-    forcaDoPulo: 3,
-    // QUANTIDADE DE PULOS QUE O BLOCO FEZ
-    qntPulos: 0,
+bloco =     {
+                // COORDENADA x INICIAL DO BLOCO (LADO ESQUERDO)
+                x: 50,
+                // COORDENADA y INICIAL DO BLOCO (LADO DE CIMA)
+                y: 0,
+                // ALTURA DO BLOCO
+                altura: 50,
+                // LARGURA DO BLOCO
+                largura: 50,
+                // COR DO BLOCO
+                cor: "#ff9239",
+                // ATRIBUTO QUE REPRESENTA O VALOR DA GRAVIDADE
+                gravidade: 1.6,
+                // VELOCIDADE DE QUEDA DO BLOCO
+                velocidade: 0,
+                // FORÇA DO PULO DO BLOCO
+                forcaDoPulo: 23.6,
+                // QUANTIDADE DE PULOS QUE O BLOCO FEZ
+                qntPulos: 0,
 
-    // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
-    atualiza:   function(){
-                    // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
-                    this.velocidade += this.gravidade;
-                    // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
-                    this.y += this.velocidade;
+                // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
+                atualiza:   function()
+                            {
+                                // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
+                                this.velocidade += this.gravidade;
+                                // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
+                                this.y += this.velocidade;
 
-                    // VERIFICANDO SE O BLOCO CHEGOU AO CHAO
-                    if(this.y > chao.y - this.altura){
-                        // FORÇANDO O BLOCO A 'FICAR' EM CIMA DO CHAO
-                        this.y = chao.y - this.altura;
-                        // RESETANDO A COTA MAXIMA DE PULOS DO BLOCO
-                        this.qntPulos = 0
-                    }
-                },
+                                // VERIFICANDO SE O BLOCO CHEGOU AO CHAO
+                                if(this.y > chao.y - this.altura)
+                                {
+                                    // FORÇANDO O BLOCO A 'FICAR' EM CIMA DO CHAO
+                                    this.y = chao.y - this.altura;
+                                    // RESETANDO A COTA MAXIMA DE PULOS DO BLOCO
+                                    this.qntPulos = 0
+                                }
+                            },
 
-    // METODO PARA FAZER O BLOCO PULAR
-    pula:   function(){
-                // VERIFICANDO SE O BLOCO JA ATINGIU A COTA MAXIMA DE PULOS
-                if(this.qntPulos < maxPulos){
-                    // MUDANDO A VELOCIDADE DO BLOCO (RELATIVO A FORÇA DO PULO)
-                    this.velocidade = -this.forcaDoPulo;
-                    // AUMENTANDO A QUANTIDADE CADA VEZ QUE O BLOCO PULA
-                    this.qntPulos++;
-                }
+                // METODO PARA FAZER O BLOCO PULAR
+                pula:   function()
+                        {
+                            // VERIFICANDO SE O BLOCO JA ATINGIU A COTA MAXIMA DE PULOS
+                            if(this.qntPulos < maxPulos)
+                            {
+                                // MUDANDO A VELOCIDADE DO BLOCO (RELATIVO A FORÇA DO PULO)
+                                this.velocidade = -this.forcaDoPulo;
+                                // AUMENTANDO A QUANTIDADE CADA VEZ QUE O BLOCO PULA
+                                this.qntPulos++;
+                            }
+                        },
+
+                // METODO PARA DESENHAR O BLOCO
+                desenha:    function()
+                            {
+                                // MUDANDO A COR DO CONTEXTO DO BLOCO
+                                ctx.fillStyle = this.cor;
+                                // DESENHANDO O RETANGULO QUE REPRESENTA O BLOCO
+                                ctx.fillRect(this.x, this.y, this.largura, this.altura);
+                            }
+
             },
 
-    // METODO PARA DESENHAR O BLOCO
-    desenha:    function(){
-                    // MUDANDO A COR DO CONTEXTO DO BLOCO
-                    ctx.fillStyle = this.cor;
-                    // DESENHANDO O RETANGULO QUE REPRESENTA O BLOCO
-                    ctx.fillRect(this.x, this.y, this.largura, this.altura);
+
+obstaculos =    {
+                    _obs: [],
+                    cores: ["#ffbc1c","ff1c1c","ff85e1","52a7ff","78ff5d"],
+
+                    insere: function()
+                    {
+                        this._obs.push( {
+                                            x: largura,
+                                            largura: 30 + Math.floor(21 * Math.random()),
+                                            altura: 30 + Math.floor(120 * Math.random()),
+                                            cor: this.cores[Math.floor(Math.random * 5)]
+                                        })
+                    }
                 }
-
-
-}
 
 
 // FUNCAO QUE IDENTIFICA SE HOUVE CLIQUE
-function clique(evt){
+function clique(evt)
+{
     // BLOCO ESTA PULANDO
     bloco.pula();
 }
@@ -101,7 +123,8 @@ function clique(evt){
 
 
 // FUNCAO PARA ATUALIZAR O STATUS DO PERSONAGEM E DOS BLOCOS
-function atualiza(){
+function atualiza()
+{
     // INCREMENTANDO O FRAMES DO JOGO
     //frames++;
 
@@ -112,9 +135,10 @@ function atualiza(){
 
 
 // FUNCAO USADA PARA DESENHAR (PERSONAGEM, BLOCOS, CHAO, ETC...) DEPOIS DE ATUALIZAR
-function desenha(){
+function desenha()
+{
     // PINTANDO O FUNDO DA CANVAS DE AZUL
-    ctx.fillStyle = "#50beff";
+    ctx.fillStyle = "#80daff";
 
     // TAMANHO DA AREA DE PINTURA
     ctx.fillRect(0, 0, largura, altura);
@@ -128,7 +152,8 @@ function desenha(){
 
 
 // FUNCAO PARA RODAR O JOGO. ONDE VAI FICAR O LOOP, DESENHADO NA CANVAS
-function roda(){
+function roda()
+{
     // ATUALIZANDO O STATUS DO PERSONAGEM E BLOCOS
     atualiza();
 
@@ -143,7 +168,8 @@ function roda(){
 
 
 // FUNÇÃO PRINCIPAL DO JOGO
-function main(){
+function main()
+{
     // RECEBENDO A ALTURA DA JANELA DO USUARIO
     altura = window.innerHeight;
 
