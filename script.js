@@ -14,6 +14,9 @@ frames = 0,
 // QUANTIDADE MAXIMA DE PULOS
 maxPulos = 3,
 
+
+velocidade = 6,
+
 // DECLARANDO AS PROPRIEDADES DO CHAO
 chao =  {
             // COORDENADA (y) ONDE O CHAO COMEÇA
@@ -23,6 +26,7 @@ chao =  {
             // DEFININDO A COR DO CHAO
             cor: "#e8da78",
             // FUNCAO PARA DESENHAR O CHAO
+
             desenha:    function()
                         {
                             // MUDANDO A COR DO CONTEXTO NO CHAO
@@ -97,33 +101,66 @@ bloco =     {
             },
 
 
+// DECLARANDO AS PROPRIEDADES DOS OBSTACULOS
 obstaculos =    {
+                    // ARRAY DE OBSTACULOS
                     _obs: [],
+                    // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
                     cores: ["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"],
 
+                    tempoInsere:0,
+
+                    // METODO PARA INSERIR UM ELEMENTO NO ARRAY DE OBSTACULOS
                     insere: function()
                             {
+                                // INSERINDO O OBSTACULO NO ARRAY
                                 this._obs.push({
-                                                    x: 200,
+                                                    // POSICAO X INICIAL
+                                                    x: largura,
+                                                    // LARGURA DO OBSTACULO
                                                     largura: 30 + Math.floor(21 * Math.random()),
+                                                    // ALTURA DO OBSTACULO
                                                     altura: 30 + Math.floor(120 * Math.random()),
+                                                    // COR DO OBSTACULO
                                                     cor: this.cores[Math.floor(5 * Math.random())]
                                                 }
                                 );
+
+                                this.tempoInsere = 30 + Math.floor(20 * Math.random());
                             },
+                    
                     
                     atualiza:   function()
                                 {
+                                    if(this.tempoInsere == 0)
+                                        this.insere();
+                                    else
+                                        this.tempoInsere--;
 
-                                },
-
-                    desenha:    function()
-                                {
                                     for(var i = 0, tam = this._obs.length; i < tam; i++)
                                     {
                                         var obs = this._obs[i];
+                                        obs.x -= velocidade;
+                                        if(obs.x <= -obs.largura)
+                                        {
+                                            this._obs.splice(i,1);
+                                            i--;
+                                            tam--;
+                                            
+                                        }
+                                    }
+                                },
+
+                    // METODO PARA DESENHAR O OBSTACULO NA TELA
+                    desenha:    function()
+                                {
+                                    // PERCORRENDO O ARRAY PARA DESENHAR OS BLOCOS QUE ESTAO NO MESMO
+                                    for(var i = 0, tam = this._obs.length; i < tam; i++)
+                                    {
+                                        var obs = this._obs[i];
+                                        // MUDANDO A COR DO CONTEXTO DO BLOCO
                                         ctx.fillStyle = obs.cor;
-                                        //console.log(obs.cor);
+                                        // DESENHANDO O BLOCO
                                         ctx.fillRect(obs.x, chao.y - obs.altura, obs.largura, obs.altura);
                                     }
                                 }
@@ -147,6 +184,8 @@ function atualiza()
 
     // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA)
     bloco.atualiza();
+
+    obstaculos.atualiza();
 }
 
 
@@ -156,15 +195,12 @@ function desenha()
 {
     // PINTANDO O FUNDO DA CANVAS DE AZUL
     ctx.fillStyle = "#80daff";
-
     // TAMANHO DA AREA DE PINTURA
     ctx.fillRect(0, 0, largura, altura);
-
     // DESENHANDO O CHAO
     chao.desenha();
-
+    // DESENHANDO OS OBSTACULOS
     obstaculos.desenha();
-
     // DESENHANDO O BLOCO
     bloco.desenha();
 }
@@ -175,10 +211,8 @@ function roda()
 {
     // ATUALIZANDO O STATUS DO PERSONAGEM E BLOCOS
     atualiza();
-
     // DESENHANDO PERSONAGEM, BLOCOS, CHAO, ETC...
     desenha();
-
     // CHAMANDO A FUNÇÃO RODA DIRETO (LOOP)
     window.requestAnimationFrame(roda);
 }
@@ -191,7 +225,6 @@ function main()
 {
     // RECEBENDO A ALTURA DA JANELA DO USUARIO
     altura = window.innerHeight;
-
     // RECEBENDO A LARGURA DA JANELA DO USUARIO
     largura = window.innerWidth;
 
@@ -212,16 +245,12 @@ function main()
 
     // CRIANDO UMA BORDA PRETA PARA A CANVAS
     canvas.style.border = "1px solid #000";
-
     // TUDO O QUE FOR DESENHADO SERÁ 2D
     ctx = canvas.getContext("2d");
-
     // ADICIONANDO A VARIAVEL CANVAS NO CORPO DO HTML
     document.body.appendChild(canvas);
-
     // CONFIGURANDO O EVENTO "clique"
     document.addEventListener("mousedown", clique);
-
     // RODANDO O JOGO
     roda();
 }
