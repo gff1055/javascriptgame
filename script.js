@@ -1,24 +1,16 @@
 
 //VARIAVEIS DO JOGO
 
-// VARIAVEIS USADAS PARA DESENHAR OS ITENS
-var canvas, ctx,
+var canvas, ctx,    // VARIAVEIS USADAS PARA DESENHAR OS ITENS
 
 // VARIAVEIS USADAS PARA PEGAR O TAMANHO DA JANELA DO NAVEGADOR
-altura = 0,
+altura = 0, 
 largura = 0,
 
-// VARIAVEL USADA NO CONTROLE DA ANIMAÇÃO DO JOGO
-frames = 0,
-
-// QUANTIDADE MAXIMA DE PULOS
-maxPulos = 3,
-
-// VARIAVEL PARA A VELOCIDADE DOS OBSTACULOS
-velocidade = 10,
-
-// Variavel que gerencia o estado atual do jogo
-estadoAtual,
+frames = 0, // VARIAVEL USADA NO CONTROLE DA ANIMAÇÃO DO JOGO
+maxPulos = 3,   // QUANTIDADE MAXIMA DE PULOS
+velocidade = 10,    // VARIAVEL PARA A VELOCIDADE DOS OBSTACULOS
+estadoAtual,    // Variavel que gerencia o estado atual do jogo
 
 // Variavel recebe um array que contem os possiveis estados do jogo
 estados =   {
@@ -30,63 +22,49 @@ estados =   {
 
 // DECLARANDO AS PROPRIEDADES DO CHAO
 chao =  {
-            // COORDENADA (y) ONDE O CHAO COMEÇA
-            y: 550,
-            // DEFININDO A ALTURA DO chao
-            altura: 50,
-            // DEFININDO A COR DO CHAO
-            cor: "#e8da78",
+            
+            y: 550, // COORDENADA (y) ONDE O CHAO COMEÇA
+            altura: 50, // DEFININDO A ALTURA DO chao
+            cor: "#e8da78", // DEFININDO A COR DO CHAO
 
+            
             // FUNCAO PARA DESENHAR O CHAO
             desenha:    function()
                         {
-                            // MUDANDO A COR DO CONTEXTO NO CHAO
-                            ctx.fillStyle = this.cor;
-                            // DESENHANDO O RETANGULO QUE REPRESENTA O CHAO
-                            ctx.fillRect(0, this.y, largura, this.altura);    
+                            ctx.fillStyle = this.cor;   // MUDANDO A COR DO CONTEXTO NO CHAO
+                            ctx.fillRect(0, this.y, largura, this.altura);  // DESENHANDO O RETANGULO QUE REPRESENTA O CHAO
                         },
 },
 
 
 // DECLARANDO AS PROPRIEDADES DO BLOCO        
 bloco =     {
-                // COORDENADA x INICIAL DO BLOCO (LADO ESQUERDO)
-                x: 50,
-                // COORDENADA y INICIAL DO BLOCO (LADO DE CIMA)
-                y: 0,
-                // ALTURA DO BLOCO
-                altura: 50,
-                // LARGURA DO BLOCO
-                largura: 50,
-                // COR DO BLOCO
-                cor: "#ff9239",
-                // ATRIBUTO QUE REPRESENTA O VALOR DA GRAVIDADE
-                gravidade: 1.6,
-                // VELOCIDADE DE QUEDA DO BLOCO
-                velocidade: 0,
-                // FORÇA DO PULO DO BLOCO
-                forcaDoPulo: 23.6,
-                // QUANTIDADE DE PULOS QUE O BLOCO FEZ
-                qntPulos: 0,
+                x: 50,  // COORDENADA x INICIAL DO BLOCO (LADO ESQUERDO)
+                y: 0,   // COORDENADA y INICIAL DO BLOCO (LADO DE CIMA)
+                altura: 50, // ALTURA DO BLOCO
+                largura: 50,    // LARGURA DO BLOCO
+                cor: "#ff9239", // COR DO BLOCO
+                gravidade: 1.6, // ATRIBUTO QUE REPRESENTA O VALOR DA GRAVIDADE
+                velocidade: 0,  // VELOCIDADE DE QUEDA DO BLOCO
+                forcaDoPulo: 23.6,  // FORÇA DO PULO DO BLOCO
+                qntPulos: 0,    // QUANTIDADE DE PULOS QUE O BLOCO FEZ
+
 
                 // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
                 atualiza:   function()
                             {
-                                // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
-                                this.velocidade += this.gravidade;
-                                // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
-                                this.y += this.velocidade;
+                                this.velocidade += this.gravidade;  // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
+                                this.y += this.velocidade;  // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
 
                                 // VERIFICANDO SE O BLOCO CHEGOU AO CHAO
                                 if(this.y > chao.y - this.altura && estadoAtual!=estados.perdeu)
                                 {
-                                    // FORÇANDO O BLOCO A 'FICAR' EM CIMA DO CHAO
-                                    this.y = chao.y - this.altura;
-                                    // RESETANDO A COTA MAXIMA DE PULOS DO BLOCO
-                                    this.qntPulos = 0;
+                                    this.y = chao.y - this.altura;  // FORÇANDO O BLOCO A 'FICAR' EM CIMA DO CHAO
+                                    this.qntPulos = 0;  // RESETANDO A COTA MAXIMA DE PULOS DO BLOCO
                                     this.velocidade = 0;
                                 }
                 },
+
 
                 // METODO PARA FAZER O BLOCO PULAR
                 pula:   function()
@@ -94,20 +72,17 @@ bloco =     {
                             // VERIFICANDO SE O BLOCO JA ATINGIU A COTA MAXIMA DE PULOS
                             if(this.qntPulos < maxPulos)
                             {
-                                // MUDANDO A VELOCIDADE DO BLOCO (RELATIVO A FORÇA DO PULO)
-                                this.velocidade = -this.forcaDoPulo;
-                                // AUMENTANDO A QUANTIDADE CADA VEZ QUE O BLOCO PULA
-                                this.qntPulos++;
+                                this.velocidade = -this.forcaDoPulo;    // MUDANDO A VELOCIDADE DO BLOCO (RELATIVO A FORÇA DO PULO)
+                                this.qntPulos++;    // AUMENTANDO A QUANTIDADE CADA VEZ QUE O BLOCO PULA
                             }
                 },
+
 
                 // METODO PARA DESENHAR O BLOCO
                 desenha:    function()
                             {
-                                // MUDANDO A COR DO CONTEXTO DO BLOCO
-                                ctx.fillStyle = this.cor;
-                                // DESENHANDO O RETANGULO QUE REPRESENTA O BLOCO
-                                ctx.fillRect(this.x, this.y, this.largura, this.altura);
+                                ctx.fillStyle = this.cor;   // MUDANDO A COR DO CONTEXTO DO BLOCO
+                                ctx.fillRect(this.x, this.y, this.largura, this.altura);    // DESENHANDO O RETANGULO QUE REPRESENTA O BLOCO
                 }
 
 },
@@ -115,29 +90,23 @@ bloco =     {
 
 // DECLARANDO AS PROPRIEDADES DOS OBSTACULOS
 obstaculos =    {
-                    // ARRAY DE OBSTACULOS
-                    _obs: [],
-                    // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
-                    cores: ["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"],
-                    // Variavel que ajuda no tempo inserção dos obstaculos
-                    tempoInsere:0,
+                    _obs: [],   // ARRAY DE OBSTACULOS
+                    cores: ["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"], // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
+                    tempoInsere:0,  // Variavel que ajuda no tempo inserção dos obstaculos
 
                     // METODO PARA INSERIR UM ELEMENTO NO ARRAY DE OBSTACULOS
                     insere: function()
                             {
+
                                 // INSERINDO O OBSTACULO NO ARRAY
                                 this._obs.push( {
-                                                    // POSICAO X INICIAL
-                                                    x: largura,
-                                                    // LARGURA DO OBSTACULO
-                                                    largura: 30 + Math.floor(21 * Math.random()),
-                                                    // ALTURA DO OBSTACULO
-                                                    altura: 30 + Math.floor(120 * Math.random()),
-                                                    // COR DO OBSTACULO
-                                                    cor: this.cores[Math.floor(5 * Math.random())]
+                                                    x: largura, // POSICAO X INICIAL
+                                                    largura: 30 + Math.floor(21 * Math.random()),   // LARGURA DO OBSTACULO
+                                                    altura: 30 + Math.floor(120 * Math.random()),   // ALTURA DO OBSTACULO
+                                                    cor: this.cores[Math.floor(5 * Math.random())]  // COR DO OBSTACULO
                                 });
-                                // Inicializando o temporizador dos obstaculos
-                                this.tempoInsere = 30 + Math.floor(20 * Math.random());
+                                
+                                this.tempoInsere = 30 + Math.floor(20 * Math.random()); // Inicializando o temporizador dos obstaculos
                     },
 
                     // METODO PARA ATUALIZAR O ARRAY DE OBSTACULOS
@@ -145,25 +114,18 @@ obstaculos =    {
                                 {
                                     // Se o temporizador chegar a zero
                                     if(this.tempoInsere == 0)
-                                    {
-                                        // Inserindo um bloco
-                                        this.insere();
-                                    }
+                                        this.insere();  // Inserindo um bloco
 
-                                    // O temporizador ainda não é zero
-                                    else
-                                    {
-                                        // Decrementando o temporizador
-                                        this.tempoInsere--;
-                                    }
 
-                                    // Rodando o array de obstaculos
-                                    for(var i = 0, tam = this._obs.length; i < tam; i++)
+                                    
+                                    else    // O temporizador ainda não é zero
+                                        this.tempoInsere--; // Decrementando o temporizador
+
+                                    
+                                    for(var i = 0, tam = this._obs.length; i < tam; i++)    // Rodando o array de obstaculos
                                     {
-                                        // SELECIONANDO O ELEMENTO(OBSTACULO) ATUAL
-                                        var obs = this._obs[i];
-                                        // DECREMENTANDO O VALOR DE X EM RELAÇÃO A VELOCIDADE DO OBSTACULO
-                                        obs.x -= velocidade;
+                                        var obs = this._obs[i]; // SELECIONANDO O ELEMENTO(OBSTACULO) ATUAL
+                                        obs.x -= velocidade;    // DECREMENTANDO O VALOR DE X EM RELAÇÃO A VELOCIDADE DO OBSTACULO
 
                                         if(bloco.x < obs.x + obs.largura &&
                                             bloco.x + bloco.largura >= obs.x &&
@@ -176,11 +138,9 @@ obstaculos =    {
                                         // VERIFICANDO SE O OBSTACULO PASSOU DA AREA VISIVEL DO JOGO
                                         else if(obs.x <= -obs.largura)
                                         {
-                                            // Removendo o obstaculo
-                                            this._obs.splice(i,1);
-                                            // Atualizando o indice atual e o tamanho do array após a esclusão
-                                            i--;
-                                            tam--;
+                                            this._obs.splice(i,1);  // Removendo o obstaculo
+                                            i--;    // Atualizando o indice atual após a esclusão
+                                            tam--;  // Atualizando o tamanho do array após a esclusão
                                         }
                                     }
                     },
@@ -196,11 +156,10 @@ obstaculos =    {
                                     // PERCORRENDO O ARRAY PARA DESENHAR OS BLOCOS QUE ESTAO NO MESMO
                                     for(var i = 0, tam = this._obs.length; i < tam; i++)
                                     {
-                                        var obs = this._obs[i];
-                                        // MUDANDO A COR DO CONTEXTO DO BLOCO
+                                        var obs = this._obs[i]; // MUDANDO A COR DO CONTEXTO DO BLOCO
                                         ctx.fillStyle = obs.cor;
-                                        // DESENHANDO O BLOCO
-                                        ctx.fillRect(obs.x, chao.y - obs.altura, obs.largura, obs.altura);
+                                        ctx.fillRect(obs.x, chao.y - obs.altura, obs.largura, obs.altura);  // DESENHANDO O BLOCO
+                                        
                                     }
                     }
 };
@@ -211,15 +170,10 @@ function clique(evt)
 {
 
     if(estadoAtual == estados.jogando)
-    {
-        // BLOCO ESTA PULANDO
-        bloco.pula();
-    }
+        bloco.pula();   // BLOCO ESTA PULANDO
 
     else if(estadoAtual == estados.jogar)
-    {
         estadoAtual = estados.jogando
-    }
 
     else if(estadoAtual == estados.perdeu && bloco.y >= altura)
     {
@@ -235,16 +189,11 @@ function clique(evt)
 // FUNCAO PARA ATUALIZAR O STATUS DO PERSONAGEM E DOS BLOCOS
 function atualiza()
 {
-    // INCREMENTANDO O FRAMES DO JOGO
-    frames++;
-    // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA ou CLIQUE)
-    bloco.atualiza();
+    frames++;   // INCREMENTANDO O FRAMES DO JOGO
+    bloco.atualiza();   // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA ou CLIQUE)
 
     if(estadoAtual == estados.jogando)
-    {
-        // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
-        obstaculos.atualiza();
-    }
+        obstaculos.atualiza();  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
 
     if(estadoAtual == estados.perdeu)
     {
@@ -256,45 +205,40 @@ function atualiza()
 // FUNCAO USADA PARA DESENHAR (PERSONAGEM, BLOCOS, CHAO, ETC...) DEPOIS DE ATUALIZAR
 function desenha()
 {
-    // PINTANDO O FUNDO DA CANVAS DE AZUL
-    ctx.fillStyle = "#80daff";
-    // TAMANHO DA AREA DE PINTURA
-    ctx.fillRect(0, 0, largura, altura);
+    ctx.fillStyle = "#80daff";  // PINTANDO O FUNDO DA CANVAS DE AZUL
+    ctx.fillRect(0, 0, largura, altura);    // TAMANHO DA AREA DE PINTURA
 
+    
     if(estadoAtual == estados.jogar)
     {
-        ctx.fillStyle = "green";
-        ctx.fillRect(largura/2 - 50, altura/2 - 50, 100, 100);
+        ctx.fillStyle = "green";    // Preenche o contexto de verde
+        ctx.fillRect(largura/2 - 50, altura/2 - 50, 100, 100);  // Desenha o quadrado
     }
 
+    // Condicional no caso do usuario ter perdido o jogo
     else if(estadoAtual == estados.perdeu)
     {
-        ctx.fillStyle = "red";
-        ctx.fillRect(largura/2 - 50, altura/2 - 50, 100, 100);
+        ctx.fillStyle = "red";  // Preenche o contexto de vermelho
+        ctx.fillRect(largura/2 - 50, altura/2 - 50, 100, 100);  // Desenha o quadrado
     }
 
+    // Condicionao no caso do jogo estar em execucao
     else if(estadoAtual == estados.jogando)
     {
-        // DESENHANDO OS OBSTACULOS
-        obstaculos.desenha();
+        obstaculos.desenha();   // DESENHANDO OS OBSTACULOS
     }
 
-    // DESENHANDO O CHAO
-    chao.desenha();
-    // DESENHANDO O BLOCO
-    bloco.desenha();
+    chao.desenha(); // DESENHANDO O CHAO
+    bloco.desenha();    // DESENHANDO O BLOCO
 }
 
 
 // FUNCAO PARA RODAR O JOGO. ONDE VAI FICAR O LOOP, DESENHADO NA CANVAS
 function roda()
 {
-    // ATUALIZANDO O STATUS DO PERSONAGEM E BLOCOS
-    atualiza();
-    // DESENHANDO PERSONAGEM, BLOCOS, CHAO, ETC...
-    desenha();
-    // CHAMANDO A FUNÇÃO RODA DIRETO (LOOP)
-    window.requestAnimationFrame(roda);
+    atualiza(); // ATUALIZANDO O STATUS DO PERSONAGEM E BLOCOS
+    desenha();  // DESENHANDO PERSONAGEM, BLOCOS, CHAO, ETC...
+    window.requestAnimationFrame(roda); // CHAMANDO A FUNÇÃO RODA DIRETO (LOOP)
 }
 
 
@@ -303,10 +247,8 @@ function roda()
 // FUNÇÃO PRINCIPAL DO JOGO
 function main()
 {
-    // RECEBENDO A ALTURA DA JANELA DO USUARIO
-    altura = window.innerHeight;
-    // RECEBENDO A LARGURA DA JANELA DO USUARIO
-    largura = window.innerWidth;
+    altura = window.innerHeight;    // RECEBENDO A ALTURA DA JANELA DO USUARIO
+    largura = window.innerWidth;    // RECEBENDO A LARGURA DA JANELA DO USUARIO
 
     // VERIFICANDO O TAMANHO DA JANELA DO USUARIO
     if(largura>=500)
@@ -316,23 +258,23 @@ function main()
         altura = 600;
     }
 
-    // CRIANDO UM ELEMENTO DO TIPO CANVAS
-    canvas = document.createElement("canvas");
-    // ATRIBUINDO A CANVAS A ALTURA E A LARGURA CONFIGURADAS ANTERIORMENTE
-    canvas.width = largura;
-    canvas.height = altura;
-    // CRIANDO UMA BORDA PRETA PARA A CANVAS
-    canvas.style.border = "1px solid #000";
-    // TUDO O QUE FOR DESENHADO SERÁ 2D
-    ctx = canvas.getContext("2d");
-    // ADICIONANDO A VARIAVEL CANVAS NO CORPO DO HTML
-    document.body.appendChild(canvas);
-    // CONFIGURANDO O EVENTO "clique"
-    document.addEventListener("mousedown", clique);
+    canvas = document.createElement("canvas");  // CRIANDO UM ELEMENTO DO TIPO CANVAS
+    
+    canvas.width = largura; // ATRIBUINDO A CANVAS A LARGURA CONFIGURADA ANTERIORMENTE
+    
+    canvas.height = altura; // ATRIBUINDO A CANVAS A ALTURA CONFIGURADA ANTERIORMENTE
 
-    estadoAtual = estados.jogar;
-    // RODANDO O JOGO
-    roda();
+    canvas.style.border = "1px solid #000"; // CRIANDO UMA BORDA PRETA PARA A CANVAS
+    
+    ctx = canvas.getContext("2d");  // TUDO O QUE FOR DESENHADO SERÁ 2D
+    
+    document.body.appendChild(canvas);  // ADICIONANDO A VARIAVEL CANVAS NO CORPO DO HTML
+    
+    document.addEventListener("mousedown", clique); // CONFIGURANDO O EVENTO "clique"
+    
+    estadoAtual = estados.jogar;    // Possibilita a exibir primeira tela com o quadrado verde
+    
+    roda(); // RODANDO O JOGO
 }
 
 // INICIALIZA O JOGO
