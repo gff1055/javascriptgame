@@ -55,13 +55,15 @@ bloco =     {
                             {
                                 this.velocidade += this.gravidade;  // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
                                 this.y += this.velocidade;  // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
-
-                                // VERIFICANDO SE O BLOCO CHEGOU AO CHAO
-                                if(this.y > chao.y - this.altura && estadoAtual!=estados.perdeu)
+                                
+                                /* MANTENDO O BLOCO NO CHAO */
+                                // Condicional... 
+                                if(this.y > chao.y - this.altura    // ... caso o bloco chegue ao chao
+                                    && estadoAtual!=estados.perdeu) // ... e caso o usuario nao tenha perdido o jogo
                                 {
                                     this.y = chao.y - this.altura;  // FORÇANDO O BLOCO A 'FICAR' EM CIMA DO CHAO
                                     this.qntPulos = 0;  // RESETANDO A COTA MAXIMA DE PULOS DO BLOCO
-                                    this.velocidade = 0;
+                                    this.velocidade = 0;    // Reseta a velocidade do bloco apos tocar o chao
                                 }
                 },
 
@@ -115,39 +117,39 @@ obstaculos =    {
                                     // Se o temporizador chegar a zero
                                     if(this.tempoInsere == 0)
                                         this.insere();  // Inserindo um bloco
-
-
                                     
-                                    else    // O temporizador ainda não é zero
+                                    // O temporizador ainda não é zero
+                                    else 
                                         this.tempoInsere--; // Decrementando o temporizador
 
-                                    
-                                    for(var i = 0, tam = this._obs.length; i < tam; i++)    // Rodando o array de obstaculos
+                                    // Rodando o array de obstaculos
+                                    for(var i = 0, tam = this._obs.length; i < tam; i++)
                                     {
                                         var obs = this._obs[i]; // SELECIONANDO O ELEMENTO(OBSTACULO) ATUAL
                                         obs.x -= velocidade;    // DECREMENTANDO O VALOR DE X EM RELAÇÃO A VELOCIDADE DO OBSTACULO
 
+                                        // Condicional nos casos onde haver colisao do bloco com obstaculos
                                         if(bloco.x < obs.x + obs.largura &&
                                             bloco.x + bloco.largura >= obs.x &&
                                             bloco.y + bloco.altura >= chao.y - obs.largura)
                                         {
-                                            estadoAtual = estados.perdeu;
+                                            estadoAtual = estados.perdeu;   // O usuario perde o jogo
                                         }
                                         
-                                        /** Condicional para remover o obbstaculo do array **/
-                                        // VERIFICANDO SE O OBSTACULO PASSOU DA AREA VISIVEL DO JOGO
+                                        /** Condicional quando o obstaculo sair da area de visao **/
                                         else if(obs.x <= -obs.largura)
                                         {
-                                            this._obs.splice(i,1);  // Removendo o obstaculo
+                                            this._obs.splice(i,1);  // Removendo o obstaculo do array
                                             i--;    // Atualizando o indice atual após a esclusão
                                             tam--;  // Atualizando o tamanho do array após a esclusão
                                         }
                                     }
                     },
 
+                    // Metodo para limpar o array de obstaculos apos o usuario perder uma partida
                     limpa:  function()
                             {
-                                this._obs = [];
+                                this._obs = []; // Limpando o array de obstaculos
                     },
 
                     // METODO PARA DESENHAR O OBSTACULO NA TELA
@@ -168,18 +170,21 @@ obstaculos =    {
 // FUNCAO QUE IDENTIFICA SE HOUVE CLIQUE
 function clique(evt)
 {
-
+    // Condicional caso o jogo esteja sendo executado
     if(estadoAtual == estados.jogando)
-        bloco.pula();   // BLOCO ESTA PULANDO
+        bloco.pula();   // O bloco pula
 
+    // Condicional caso o jogo esteja prestes a ser executado
     else if(estadoAtual == estados.jogar)
-        estadoAtual = estados.jogando
+        estadoAtual = estados.jogando;  // Agora o jogo esta sendo executado
 
-    else if(estadoAtual == estados.perdeu && bloco.y >= altura)
+    // Condicional caso... 
+    else if(estadoAtual == estados.perdeu   // ... o usuario tenha perdido o jogo
+        && bloco.y >= 2*altura)   // Faz o usuario ter que esperar para jogar novamente
     {
-        estadoAtual = estados.jogar;
-        bloco.velocidade = 0;
-        bloco.y = 0;
+        estadoAtual = estados.jogar;    // Agora o jogo esta pronto para ser iniciado
+        bloco.y = 0;    // O bloco é colocado em cima
+        bloco.velocidade = 0;   // reseta a velocidade do bloco apos o clique inicial
     }
 
 }
@@ -192,13 +197,14 @@ function atualiza()
     frames++;   // INCREMENTANDO O FRAMES DO JOGO
     bloco.atualiza();   // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA ou CLIQUE)
 
+    // Condicional no caso do jogo estar executando
     if(estadoAtual == estados.jogando)
         obstaculos.atualiza();  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
 
+    // Condicional nos cado go usuario ter perdido o jogo
     if(estadoAtual == estados.perdeu)
-    {
-        obstaculos.limpa();
-    }
+        obstaculos.limpa(); // Limpa o array de obstaculos
+        
 }
 
 
@@ -208,7 +214,7 @@ function desenha()
     ctx.fillStyle = "#80daff";  // PINTANDO O FUNDO DA CANVAS DE AZUL
     ctx.fillRect(0, 0, largura, altura);    // TAMANHO DA AREA DE PINTURA
 
-    
+    // Condicional nos casos do jogo estar esecutando
     if(estadoAtual == estados.jogar)
     {
         ctx.fillStyle = "green";    // Preenche o contexto de verde
@@ -259,21 +265,13 @@ function main()
     }
 
     canvas = document.createElement("canvas");  // CRIANDO UM ELEMENTO DO TIPO CANVAS
-    
     canvas.width = largura; // ATRIBUINDO A CANVAS A LARGURA CONFIGURADA ANTERIORMENTE
-    
     canvas.height = altura; // ATRIBUINDO A CANVAS A ALTURA CONFIGURADA ANTERIORMENTE
-
     canvas.style.border = "1px solid #000"; // CRIANDO UMA BORDA PRETA PARA A CANVAS
-    
     ctx = canvas.getContext("2d");  // TUDO O QUE FOR DESENHADO SERÁ 2D
-    
     document.body.appendChild(canvas);  // ADICIONANDO A VARIAVEL CANVAS NO CORPO DO HTML
-    
     document.addEventListener("mousedown", clique); // CONFIGURANDO O EVENTO "clique"
-    
     estadoAtual = estados.jogar;    // Possibilita a exibir primeira tela com o quadrado verde
-    
     roda(); // RODANDO O JOGO
 }
 
