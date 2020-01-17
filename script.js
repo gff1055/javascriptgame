@@ -48,6 +48,7 @@ bloco =     {
                 velocidade: 0,  // VELOCIDADE DE QUEDA DO BLOCO
                 forcaDoPulo: 23.6,  // FORÇA DO PULO DO BLOCO
                 qntPulos: 0,    // QUANTIDADE DE PULOS QUE O BLOCO FEZ
+                score: 0,
 
 
                 // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
@@ -80,6 +81,14 @@ bloco =     {
                 },
 
 
+                reset: function()
+                {
+                    this.y = 0;    // O bloco é colocado em cima
+                    this.velocidade = 0;   // reseta a velocidade do bloco apos o clique inicial
+                    this.score = 0;            
+                },
+
+
                 // METODO PARA DESENHAR O BLOCO
                 desenha:    function()
                             {
@@ -103,7 +112,8 @@ obstaculos =    {
                                 // INSERINDO O OBSTACULO NO ARRAY
                                 this._obs.push( {
                                                     x: largura, // POSICAO X INICIAL
-                                                    largura: 30 + Math.floor(21 * Math.random()),   // LARGURA DO OBSTACULO
+                                                    //largura: 30 + Math.floor(21 * Math.random()),   // LARGURA DO OBSTACULO
+                                                    largura: 50,
                                                     altura: 30 + Math.floor(120 * Math.random()),   // ALTURA DO OBSTACULO
                                                     cor: this.cores[Math.floor(5 * Math.random())]  // COR DO OBSTACULO
                                 });
@@ -132,9 +142,10 @@ obstaculos =    {
                                         if(bloco.x < obs.x + obs.largura &&
                                             bloco.x + bloco.largura >= obs.x &&
                                             bloco.y + bloco.altura >= chao.y - obs.largura)
-                                        {
-                                            estadoAtual = estados.perdeu;   // O usuario perde o jogo
-                                        }
+                                                estadoAtual = estados.perdeu;   // O usuario perde o jogo
+
+                                        else if(obs.x == 0)
+                                            bloco.score++;
                                         
                                         /** Condicional quando o obstaculo sair da area de visao **/
                                         else if(obs.x <= -obs.largura)
@@ -179,14 +190,13 @@ function clique(evt)
         estadoAtual = estados.jogando;  // Agora o jogo esta sendo executado
 
     // Condicional caso... 
-    else if(estadoAtual == estados.perdeu   // ... o usuario tenha perdido o jogo
+    else if(estadoAtual == estados.perdeu   // ... do usuario tenha perdido o jogo
         && bloco.y >= 2*altura)   // Faz o usuario ter que esperar para jogar novamente
     {
         estadoAtual = estados.jogar;    // Agora o jogo esta pronto para ser iniciado
-        bloco.y = 0;    // O bloco é colocado em cima
-        bloco.velocidade = 0;   // reseta a velocidade do bloco apos o clique inicial
+        obstaculos.limpa(); // Limpa o array de obstaculos
+        bloco.reset();
     }
-
 }
 
 
@@ -201,9 +211,7 @@ function atualiza()
     if(estadoAtual == estados.jogando)
         obstaculos.atualiza();  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
 
-    // Condicional nos cado go usuario ter perdido o jogo
-    if(estadoAtual == estados.perdeu)
-        obstaculos.limpa(); // Limpa o array de obstaculos
+
         
 }
 
@@ -213,6 +221,11 @@ function desenha()
 {
     ctx.fillStyle = "#80daff";  // PINTANDO O FUNDO DA CANVAS DE AZUL
     ctx.fillRect(0, 0, largura, altura);    // TAMANHO DA AREA DE PINTURA
+
+    ctx.fillStyle = "#fff";
+    ctx.font = "50px Arial";
+    ctx.fillText(bloco.score, 30, 68);
+    
 
     // Condicional nos casos do jogo estar esecutando
     if(estadoAtual == estados.jogar)
