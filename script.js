@@ -239,9 +239,24 @@ function desenha()
     {
         ctx.fillStyle = "red";  // Preenche o contexto de vermelho
         ctx.fillRect(largura/2 - 50, altura/2 - 50, 100, 100);  // Desenha o quadrado
+
+        ctx.save();
+        ctx.translate(largura/2, altura/2);
+        ctx.fillStyle = "#ffffff";
+
+        if(bloco.score < 10)
+            ctx.fillText(bloco.score, -13, 19);
+
+        else if(bloco.score >= 10 && bloco.score < 100)
+            ctx.fillText(bloco.score, -26, 19)
+
+        else
+            ctx.fillText(bloco.score, -39, 19);
+
+        ctx.restore();
     }
 
-    // Condicionao no caso do jogo estar em execucao
+    // Condicional no caso do jogo estar em execucao
     else if(estadoAtual == estados.jogando)
     {
         obstaculos.desenha();   // DESENHANDO OS OBSTACULOS
