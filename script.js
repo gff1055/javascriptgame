@@ -11,6 +11,7 @@ frames = 0, // VARIAVEL USADA NO CONTROLE DA ANIMAÇÃO DO JOGO
 maxPulos = 3,   // QUANTIDADE MAXIMA DE PULOS
 velocidade = 10,    // VARIAVEL PARA A VELOCIDADE DOS OBSTACULOS
 estadoAtual,    // Variavel que gerencia o estado atual do jogo
+record,
 
 // Variavel recebe um array que contem os possiveis estados do jogo
 estados =   {
@@ -85,7 +86,13 @@ bloco =     {
                 {
                     this.y = 0;    // O bloco é colocado em cima
                     this.velocidade = 0;   // reseta a velocidade do bloco apos o clique inicial
-                    this.score = 0;            
+                    this.score = 0;
+                    
+                    if(this.score > record)
+                    {
+                        localStorage.setItem("record", this.score);
+                        record = this.score;
+                    }
                 },
 
 
@@ -244,6 +251,9 @@ function desenha()
         ctx.translate(largura/2, altura/2);
         ctx.fillStyle = "#ffffff";
 
+        if(bloco.score > record)
+            ctx.fillText("Novo Record", -150, -65);
+
         if(bloco.score < 10)
             ctx.fillText(bloco.score, -13, 19);
 
@@ -300,6 +310,11 @@ function main()
     document.body.appendChild(canvas);  // ADICIONANDO A VARIAVEL CANVAS NO CORPO DO HTML
     document.addEventListener("mousedown", clique); // CONFIGURANDO O EVENTO "clique"
     estadoAtual = estados.jogar;    // Possibilita a exibir primeira tela com o quadrado verde
+    record = localStorage.getItem("record");
+
+    if(record == null)
+        record = 0;
+
     roda(); // RODANDO O JOGO
 }
 
