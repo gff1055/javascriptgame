@@ -86,13 +86,14 @@ bloco =     {
                 {
                     this.y = 0;    // O bloco é colocado em cima
                     this.velocidade = 0;   // reseta a velocidade do bloco apos o clique inicial
-                    this.score = 0;
-                    
+
                     if(this.score > record)
                     {
                         localStorage.setItem("record", this.score);
                         record = this.score;
                     }
+
+                    this.score = 0;
                 },
 
 
@@ -215,11 +216,7 @@ function atualiza()
     bloco.atualiza();   // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA ou CLIQUE)
 
     // Condicional no caso do jogo estar executando
-    if(estadoAtual == estados.jogando)
-        obstaculos.atualiza();  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
-
-
-        
+    if(estadoAtual == estados.jogando) obstaculos.atualiza();  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
 }
 
 
@@ -254,6 +251,16 @@ function desenha()
         if(bloco.score > record)
             ctx.fillText("Novo Record", -150, -65);
 
+        else if(record < 10)
+            ctx.fillText("Record " + record, -99, -65);
+
+        else if(record >= 10 && record < 100)
+            ctx.fillText("Record " + record, -112, -65);
+
+        else
+            ctx.fillText("Record " + record, -125, -65);
+
+
         if(bloco.score < 10)
             ctx.fillText(bloco.score, -13, 19);
 
@@ -267,10 +274,7 @@ function desenha()
     }
 
     // Condicional no caso do jogo estar em execucao
-    else if(estadoAtual == estados.jogando)
-    {
-        obstaculos.desenha();   // DESENHANDO OS OBSTACULOS
-    }
+    else if(estadoAtual == estados.jogando) obstaculos.desenha();   // DESENHANDO OS OBSTACULOS
 
     chao.desenha(); // DESENHANDO O CHAO
     bloco.desenha();    // DESENHANDO O BLOCO
