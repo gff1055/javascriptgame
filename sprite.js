@@ -20,4 +20,10 @@ function Sprite(x, y, largura, altura){			// Classe para gerenciar as sprites
 }
 
 var bg = new Sprite(0, 0, 600, 600),			// Instanciando a sprite para o fundo do jogo
-spriteBoneco = new Sprite(610, 0, 87, 87);		// Instanciando a sprite para o boneco
+spriteBoneco = new Sprite(610, 0, 87, 87),		// Instanciando a sprite para o boneco
+
+spriteChao = new Sprite(0, 610, 600, 54),
+novo = new Sprite(0, 670, 287, 93),
+spriteRecorde = new Sprite(0, 770, 441, 95),
+perdeu = new Sprite(610, 490, 397, 358),
+jogar = new Sprite(610, 100, 397, 347);

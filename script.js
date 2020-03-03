@@ -21,12 +21,18 @@ estados = {                                     // Variavel recebe um array que 
 
 chao = {                                        // DECLARANDO AS PROPRIEDADES DO CHAO
     y: 550,                                     // COORDENADA (y) ONDE O CHAO COMEÇA
+    x: 0,
     altura: 50,                                 // DEFININDO A ALTURA DO chao
-    cor: "#e8da78",                             // DEFININDO A COR DO CHAO
+    
+    atualiza: function(){
+        this.x -= velocidade;
+        if(this.x <= -600)
+            this.x = 0;
+    },
 
     desenha: function(){                        // FUNCAO PARA DESENHAR O CHAO
-        ctx.fillStyle = this.cor;               // MUDANDO A COR DO CONTEXTO NO CHAO
-        ctx.fillRect(0, this.y, largura, this.altura);  // DESENHANDO O RETANGULO QUE REPRESENTA O CHAO
+        spriteChao.desenha(this.x, this.y);
+        spriteChao.desenha(this.x + spriteChao.largura, this.y);
     },
 },
 
@@ -36,16 +42,18 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
     y: 0,                                       // COORDENADA y INICIAL DO BLOCO (LADO DE CIMA)
     altura: spriteBoneco.altura,                // ALTURA DO BLOCO
     largura: spriteBoneco.largura,              // LARGURA DO BLOCO
-    cor: "#ff9239",                             // COR DO BLOCO
     gravidade: 1.6,                             // ATRIBUTO QUE REPRESENTA O VALOR DA GRAVIDADE
     velocidade: 0,                              // VELOCIDADE DE QUEDA DO BLOCO
     forcaDoPulo: 23.6,                          // FORÇA DO PULO DO BLOCO
     qntPulos: 0,                                // QUANTIDADE DE PULOS QUE O BLOCO FEZ
     score: 0,                                   // Variavel para contagem do placar do jogador
+    rotacao: 0,
+
 
     atualiza: function(){                       // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
         this.velocidade += this.gravidade;      // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
         this.y += this.velocidade;              // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
+        this.rotacao += Math.PI / 180 * velocidade;
                                 
         /* MANTENDO O BLOCO NO CHAO */
         if(this.y > chao.y - this.altura        // Condicional caso o bloco chegue ao chao
@@ -65,6 +73,7 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
         }
     },
     
+
     reset: function(){                          // Metodo para resetar os atributos (y, velocidade, score) do bloco
         this.y = 0;                             // O bloco é colocado em cima
         this.velocidade = 0;                    // reseta a velocidade do bloco apos o clique inicial
@@ -79,7 +88,11 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
 
 
     desenha: function(){                        // METODO PARA DESENHAR O BLOCO
-        spriteBoneco.desenha(this.x, this.y);   // Desenha o boneco
+        ctx.save();
+        ctx.translate(this.x + this.largura / 2, this.y + this.altura / 2);
+        ctx.rotate(this.rotacao);
+        spriteBoneco.desenha(-this.largura / 2, -this.altura / 2);       // Desenha o boneco
+        ctx.restore();
     }
 
 },
@@ -95,8 +108,8 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
         this._obs.push({                        // INSERINDO O OBSTACULO NO ARRAY
             x: largura,                         // POSICAO X INICIAL
             largura: 50,                        // LARGURA DO OBSTACULO
-            altura: 30 + Math.floor(120 * Math.random()),               // ALTURA DO OBSTACULO
-            cor: this.cores[Math.floor(5 * Math.random())]              // COR DO OBSTACULO
+            altura: 30 + Math.floor(120 * Math.random()),   // ALTURA DO OBSTACULO
+            cor: this.cores[Math.floor(5 * Math.random())]  // COR DO OBSTACULO
         });
         this.tempoInsere = 30 + Math.floor(20 * Math.random());         // Inicializando o temporizador dos obstaculos
     },
@@ -110,7 +123,7 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
         else                                    // Se O temporizador ainda não é zero
             this.tempoInsere--;                 // Decrementando o temporizador
 
-        for(var i = 0, tam = this._obs.length; i < tam; i++){   // Rodando o array de obstaculos
+        for(var i = 0, tam = this._obs.length; i < tam; i++){           // Rodando o array de obstaculos
             var obs = this._obs[i];             // SELECIONANDO O ELEMENTO(OBSTACULO) ATUAL
             obs.x -= velocidade;                // DECREMENTANDO O VALOR DE X EM RELAÇÃO A VELOCIDADE DO OBSTACULO
 
@@ -165,69 +178,29 @@ function clique(evt){                           // FUNCAO QUE IDENTIFICA SE HOUV
 
 
 function atualiza(){                            // FUNCAO PARA ATUALIZAR O STATUS DO PERSONAGEM E DOS BLOCOS
-    frames++;                                   // INCREMENTANDO O FRAMES DO JOGO
-    bloco.atualiza();                           // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA ou CLIQUE)
-
+    
     if(estadoAtual == estados.jogando)          // O jogo está executando?
         obstaculos.atualiza();                  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
+    
+    chao.atualiza();
+    bloco.atualiza();                           // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA ou CLIQUE)
+    
 }
 
 
-// FUNCAO USADA PARA DESENHAR (PERSONAGEM, BLOCOS, CHAO, ETC...) DEPOIS DE ATUALIZAR
-function desenha(){
+function desenha(){                             // FUNCAO USADA PARA DESENHAR (PERSONAGEM, BLOCOS, CHAO, ETC...) DEPOIS DE ATUALIZAR
     bg.desenha(0,0);                            // Desenhando o fundo do jogo
-
 
     // Desenhando o score
     ctx.fillStyle = "#fff";                     // Cor do placar
     ctx.font = "50px Arial";                    // Fonte do placar
     ctx.fillText(bloco.score, 30, 68);          // Desenhando o placar na tela
     
-    if(estadoAtual == estados.jogar){           // O jogo está pronto para rodar?
-        ctx.fillStyle = "green";                // Preenche o contexto de verde
-        ctx.fillRect(largura/2 - 50, altura/2 - 50, 100, 100);          // Desenha o quadrado
-    }
-
-    else if(estadoAtual == estados.perdeu){     // O jogador perdeu o jogo?
-        ctx.fillStyle = "red";                  // Preenche o contexto de vermelho
-        ctx.fillRect(largura/2 - 50, altura/2 - 50, 100, 100);          // Desenha o quadrado
-
-        /** DESENHANDO O SCORE NO QUADRADO VERMELHO */
-        ctx.save();                             // Salvando a imagem
-        ctx.translate(largura/2, altura/2);     // Transladando para o meio da canvas
-        ctx.fillStyle = "#ffffff";  // 
-
-        /** EXIBINDO O PLACAR DO JOGADOR */
-
-        if(bloco.score < 10)                    // O plcar do jogador tem um digito?
-            ctx.fillText(bloco.score, -13, 19);
-
-        else if(bloco.score >= 10 && bloco.score < 100)                 // O placar do jogador tem 2 digitos?
-            ctx.fillText(bloco.score, -26, 19)
-
-        else                                    // O placar do jogador tem 3 digitos
-            ctx.fillText(bloco.score, -39, 19);
-
-
-        /** EXIBINDO O RECORDE */
-
-        if(bloco.score > record)                // O jogador bateu o recorde?
-            ctx.fillText("Novo Record", -150, -65); 
-
-        else if(record < 10)                    // O recorde atual tem um digito?
-            ctx.fillText("Record " + record, -99, -65);
-
-        else if(record >= 10 && record < 100)   // O recorde atual tem 2 digitos?
-            ctx.fillText("Record " + record, -112, -65);
-
-        else                                    // O recorde atual tem 3 digitos
-            ctx.fillText("Record " + record, -125, -65);
-
-        ctx.restore();                          // Restaura as configurações
-    }
-
-    else if(estadoAtual == estados.jogando)     // O jogo está em execução?
+    if(estadoAtual == estados.jogando)          // O jogo está em execução?
         obstaculos.desenha();                   // DESENHANDO OS OBSTACULOS
+    
+    else if(estadoAtual == estados.jogar)
+        jogar.desenha(largura / 2 - jogar.largura / 2, altura / 2 - jogar.altura / 2);
 
     chao.desenha();                             // DESENHANDO O CHAO
     bloco.desenha();                            // DESENHANDO O BLOCO
