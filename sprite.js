@@ -24,6 +24,6 @@ spriteBoneco = new Sprite(610, 0, 87, 87),		// Instanciando a sprite para o bone
 
 spriteChao = new Sprite(0, 610, 600, 54),
 novo = new Sprite(0, 670, 287, 93),
-spriteRecorde = new Sprite(0, 770, 441, 95),
+spriteRecord = new Sprite(0, 770, 441, 95),
 perdeu = new Sprite(610, 490, 397, 358),
 jogar = new Sprite(610, 100, 397, 347);

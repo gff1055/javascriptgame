@@ -198,12 +198,42 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
     
     if(estadoAtual == estados.jogando)          // O jogo está em execução?
         obstaculos.desenha();                   // DESENHANDO OS OBSTACULOS
-    
-    else if(estadoAtual == estados.jogar)
-        jogar.desenha(largura / 2 - jogar.largura / 2, altura / 2 - jogar.altura / 2);
 
     chao.desenha();                             // DESENHANDO O CHAO
     bloco.desenha();                            // DESENHANDO O BLOCO
+    
+    if(estadoAtual == estados.jogar)
+        jogar.desenha(
+            largura / 2 - jogar.largura / 2,
+            altura / 2 - jogar.altura / 2
+        );
+
+    if(estadoAtual == estados.perdeu){
+        perdeu.desenha(
+            largura / 2 - perdeu.largura / 2,
+            altura / 2 - perdeu.altura / 2 - spriteRecord.altura/2
+        );
+
+        spriteRecord.desenha(
+            largura / 2 - spriteRecord.largura / 2,
+            altura / 2 + perdeu.altura / 2 - spriteRecord.altura / 2 - 62
+        );
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "70px Arial";
+        ctx.fillText(bloco.score, 375, 350);
+
+        if(bloco.score > record){
+            novo.desenha(largura / 2 - 180, altura / 2-15);
+            ctx.fillText(bloco.score, 420, 470);
+        }
+
+        else
+            ctx.fillText(record, 420, 470);
+    }
+    
+
+    
 }
 
 
