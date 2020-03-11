@@ -49,6 +49,8 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
     score: 0,                                   // Variavel para contagem do placar do jogador
     rotacao: 0,
 
+    vidas: 3,
+    colidindo: false,
 
     atualiza: function(){                       // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
         this.velocidade += this.gravidade;      // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
@@ -130,8 +132,12 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
             if(bloco.x < obs.x + obs.largura && // Houve colisao do bloco com um obstaculo?
                 bloco.x + bloco.largura >= obs.x &&
                 bloco.y + bloco.altura >= chao.y - obs.largura
-            )
-                estadoAtual = estados.perdeu;   // O usuario perde o jogo
+            ){
+                if(bloco.vidas>=1)
+                    bloco.vidas--;
+                else
+                    estadoAtual = estados.perdeu;   // O usuario perde o jogo
+            }
 
             
             else if(obs.x == 0)                 // O bloco pulou o obstaculo?
@@ -195,6 +201,8 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
     ctx.fillStyle = "#fff";                     // Cor do placar
     ctx.font = "50px Arial";                    // Fonte do placar
     ctx.fillText(bloco.score, 30, 68);          // Desenhando o placar na tela
+    ctx.fillStyle = "#000";                     
+    ctx.fillText(bloco.score, 540, 68);
     
     if(estadoAtual == estados.jogando)          // O jogo está em execução?
         obstaculos.desenha();                   // DESENHANDO OS OBSTACULOS
@@ -221,15 +229,17 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
 
         ctx.fillStyle = "#fff";
         ctx.font = "70px Arial";
-        ctx.fillText(bloco.score, 375, 350);
+        
 
         if(bloco.score > record){
-            novo.desenha(largura / 2 - 180, altura / 2-15);
-            ctx.fillText(bloco.score, 420, 470);
+            novo.desenha(largura / 2 - 200, altura / 2-15);
+            ctx.fillText(bloco.score, 385, 440);
         }
 
-        else
-            ctx.fillText(record, 420, 470);
+        else{
+            ctx.fillText(record, 385, 440);
+            ctx.fillText(bloco.score, 385, 360);
+        }
     }
     
 
