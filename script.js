@@ -86,6 +86,7 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
         }
 
         this.score = 0;                         // O placar é zerado para o reinicio do jogo
+        this.vidas = 3;
     },
 
 
@@ -129,16 +130,22 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
             var obs = this._obs[i];             // SELECIONANDO O ELEMENTO(OBSTACULO) ATUAL
             obs.x -= velocidade;                // DECREMENTANDO O VALOR DE X EM RELAÇÃO A VELOCIDADE DO OBSTACULO
 
-            if(bloco.x < obs.x + obs.largura && // Houve colisao do bloco com um obstaculo?
-                bloco.x + bloco.largura >= obs.x &&
-                bloco.y + bloco.altura >= chao.y - obs.largura
-            ){
+            if(!bloco.colidindo
+            && bloco.x < obs.x + obs.largura    // Houve colisao do bloco com um obstaculo?
+            && bloco.x + bloco.largura >= obs.x
+            && bloco.y + bloco.altura >= chao.y - obs.largura){
+                bloco.colidindo = true;
+
+                setTimeout(function(){
+                    bloco.colidindo = false;
+                }, 500);
+
                 if(bloco.vidas>=1)
                     bloco.vidas--;
+
                 else
                     estadoAtual = estados.perdeu;   // O usuario perde o jogo
             }
-
             
             else if(obs.x == 0)                 // O bloco pulou o obstaculo?
                 bloco.score++;                  // O usuario marcou um ponto
@@ -198,11 +205,11 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
     bg.desenha(0,0);                            // Desenhando o fundo do jogo
 
     // Desenhando o score
-    ctx.fillStyle = "#fff";                     // Cor do placar
-    ctx.font = "50px Arial";                    // Fonte do placar
+    ctx.fillStyle = "#000";                     // Cor do placar
+    ctx.font = "50px Oxanium";                  // Fonte do placar
     ctx.fillText(bloco.score, 30, 68);          // Desenhando o placar na tela
     ctx.fillStyle = "#000";                     
-    ctx.fillText(bloco.score, 540, 68);
+    ctx.fillText(bloco.vidas, 540, 68);
     
     if(estadoAtual == estados.jogando)          // O jogo está em execução?
         obstaculos.desenha();                   // DESENHANDO OS OBSTACULOS
@@ -228,7 +235,7 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
         );
 
         ctx.fillStyle = "#fff";
-        ctx.font = "70px Arial";
+        ctx.font = "70px Oxanium";
         
 
         if(bloco.score > record){
