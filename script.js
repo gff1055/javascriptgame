@@ -21,17 +21,17 @@ estados = {                                     // Variavel recebe um array que 
 
 chao = {                                        // DECLARANDO AS PROPRIEDADES DO CHAO
     y: 550,                                     // COORDENADA (y) ONDE O CHAO COMEÇA
-    x: 0,
+    x: 0,                                       // Coordenada (x) (necessario para o chao 'andar' no eixo X)
     altura: 50,                                 // DEFININDO A ALTURA DO chao
     
-    atualiza: function(){
-        this.x -= velocidade;
+    atualiza: function(){                       // Metodo para atualizar a posicao do chao (ilusao de movimento)
+        this.x -= velocidade;                   // Decrementa o X de acordo com a velocidade
         if(this.x <= -600)
             this.x = 0;
     },
 
     desenha: function(){                        // FUNCAO PARA DESENHAR O CHAO
-        spriteChao.desenha(this.x, this.y);
+        spriteChao.desenha(this.x, this.y);     // Desenha o chao na posicao x,y
         spriteChao.desenha(this.x + spriteChao.largura, this.y);
     },
 },

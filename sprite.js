@@ -1,7 +1,7 @@
 
 function Sprite(x, y, largura, altura){			// Classe para gerenciar as sprites
-	this.x = x;
-	this.y = y;
+	this.x = x;									// Coordenada inicial X
+	this.y = y;									// Coordenada inicial Y
 	this.largura = largura;						// Largura da imagem
 	this.altura = altura;						// Altura da imagem
 
@@ -12,7 +12,7 @@ function Sprite(x, y, largura, altura){			// Classe para gerenciar as sprites
 		ctx.drawImage(
 			img,								// Imagem a ser desenhada
 			this.x, this.y,						// Coordenadas iniciais da imagem
-			this.largura, this.altura,			// Coordenadas finais da imagem
+			this.largura, this.altura,			// largura e altura da imagem
 			xCanvas, yCanvas,					// Coordenadas na canvas
 			this.largura, this.altura			// Escala da imagem
 		);			
@@ -22,8 +22,8 @@ function Sprite(x, y, largura, altura){			// Classe para gerenciar as sprites
 var bg = new Sprite(0, 0, 600, 600),			// Instanciando a sprite para o fundo do jogo
 spriteBoneco = new Sprite(610, 0, 87, 87),		// Instanciando a sprite para o boneco
 
-spriteChao = new Sprite(0, 610, 600, 54),
-novo = new Sprite(0, 670, 287, 93),
-spriteRecord = new Sprite(0, 770, 441, 95),
-perdeu = new Sprite(610, 490, 397, 358),
-jogar = new Sprite(610, 100, 397, 347);
+spriteChao = new Sprite(0, 610, 600, 54),		// Instancia a sprite para o chao
+novo = new Sprite(0, 670, 287, 93),				// Instancia a sprite quando exibe um novo recorde
+spriteRecord = new Sprite(0, 770, 441, 95),		// Instancia a sprite para o recorde do jogador
+perdeu = new Sprite(610, 490, 397, 358),		// Instancia a sprite para a tela quando o usuario perde
+jogar = new Sprite(610, 100, 397, 347);			// Instancia a sprite para a tela de inicio de jogo
