@@ -26,13 +26,13 @@ chao = {                                        // DECLARANDO AS PROPRIEDADES DO
     
     atualiza: function(){                       // Metodo para atualizar a posicao do chao (ilusao de movimento)
         this.x -= velocidade;                   // Decrementa o X de acordo com a velocidade
-        if(this.x <= -600)
+        if(this.x <= -600)                      // Se o chao sair todo da canvas ele é resetado na pos x = 0
             this.x = 0;
     },
 
     desenha: function(){                        // FUNCAO PARA DESENHAR O CHAO
         spriteChao.desenha(this.x, this.y);     // Desenha o chao na posicao x,y
-        spriteChao.desenha(this.x + spriteChao.largura, this.y);
+        spriteChao.desenha(this.x + spriteChao.largura, this.y);        // Desenha o chao novamente
     },
 },
 
@@ -47,15 +47,15 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
     forcaDoPulo: 23.6,                          // FORÇA DO PULO DO BLOCO
     qntPulos: 0,                                // QUANTIDADE DE PULOS QUE O BLOCO FEZ
     score: 0,                                   // Variavel para contagem do placar do jogador
-    rotacao: 0,
+    rotacao: 0,                                 // Vsriavel que ajuda na rotacao do personagem
 
-    vidas: 3,
-    colidindo: false,
+    vidas: 3,                                   // Variavel que armazena as vidas 
+    colidindo: false,                           // Metodo para gerenciar a dinamica das colisoes
 
     atualiza: function(){                       // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
         this.velocidade += this.gravidade;      // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
         this.y += this.velocidade;              // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
-        this.rotacao += Math.PI / 180 * velocidade;
+        this.rotacao += Math.PI / 180 * velocidade;                     // o personagem sera rotacionado em um grau porporcionalmente a velocidade
                                 
         /* MANTENDO O BLOCO NO CHAO */
         if(this.y > chao.y - this.altura        // Condicional caso o bloco chegue ao chao
@@ -85,17 +85,17 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
             record = this.score;                // variavel 'record' recebe a nova pontuação
         }
 
-        this.score = 0;                         // O placar é zerado para o reinicio do jogo
-        this.vidas = 3;
+        this.score = 0;                         // Reseta o placar
+        this.vidas = 3;                         // Reseta a quantidade de vidas
     },
 
 
     desenha: function(){                        // METODO PARA DESENHAR O BLOCO
-        ctx.save();
-        ctx.translate(this.x + this.largura / 2, this.y + this.altura / 2);
-        ctx.rotate(this.rotacao);
+        ctx.save();                             // Salva o contexto
+        ctx.translate(this.x + this.largura / 2, this.y + this.altura / 2); // Desloca o contexto para a posicao indicada
+        ctx.rotate(this.rotacao);               // Rotaciona o contexto
         spriteBoneco.desenha(-this.largura / 2, -this.altura / 2);       // Desenha o boneco
-        ctx.restore();
+        ctx.restore();                          // Restaura o contexto a posicao original
     }
 
 },
@@ -130,20 +130,20 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
             var obs = this._obs[i];             // SELECIONANDO O ELEMENTO(OBSTACULO) ATUAL
             obs.x -= velocidade;                // DECREMENTANDO O VALOR DE X EM RELAÇÃO A VELOCIDADE DO OBSTACULO
 
-            if(!bloco.colidindo
-            && bloco.x < obs.x + obs.largura    // Houve colisao do bloco com um obstaculo?
+            if(!bloco.colidindo                 // Se nao houver colisao  
+            && bloco.x < obs.x + obs.largura    // e houver colisao do bloco com um obstaculo?
             && bloco.x + bloco.largura >= obs.x
             && bloco.y + bloco.altura >= chao.y - obs.largura){
-                bloco.colidindo = true;
+                bloco.colidindo = true;         // Flag de colisao é ativada
 
-                setTimeout(function(){
+                setTimeout(function(){          // Flag de colisao volta para false 500 ms depois
                     bloco.colidindo = false;
                 }, 500);
 
-                if(bloco.vidas>=1)
-                    bloco.vidas--;
+                if(bloco.vidas>=1)              // O jogador tem pelo menos uma vida?
+                    bloco.vidas--;              // 1 vida é subtraida
 
-                else
+                else                            // O jogador nao tem vida nenhuma
                     estadoAtual = estados.perdeu;   // O usuario perde o jogo
             }
             
@@ -191,45 +191,44 @@ function clique(evt){                           // FUNCAO QUE IDENTIFICA SE HOUV
 
 
 function atualiza(){                            // FUNCAO PARA ATUALIZAR O STATUS DO PERSONAGEM E DOS BLOCOS
-    
     if(estadoAtual == estados.jogando)          // O jogo está executando?
         obstaculos.atualiza();                  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
     
-    chao.atualiza();
+    chao.atualiza();                            // Atualiza o chao a cada frame;
     bloco.atualiza();                           // ATUALIZANDO A VELOCIDADE E COORDENADA y DO BLOCO (QUEDA ou CLIQUE)
     
 }
 
 
 function desenha(){                             // FUNCAO USADA PARA DESENHAR (PERSONAGEM, BLOCOS, CHAO, ETC...) DEPOIS DE ATUALIZAR
-    bg.desenha(0,0);                            // Desenhando o fundo do jogo
+    bg.desenha(0,0);                            // Desenha o fundo do jogo
 
     // Desenhando o score
     ctx.fillStyle = "#000";                     // Cor do placar
     ctx.font = "50px Oxanium";                  // Fonte do placar
-    ctx.fillText(bloco.score, 30, 68);          // Desenhando o placar na tela
-    ctx.fillStyle = "#000";                     
-    ctx.fillText(bloco.vidas, 540, 68);
+    ctx.fillText(bloco.score, 30, 68);          // Desenha o placar na tela
+    ctx.fillStyle = "#000";                     // Cor do contador de vidas                     
+    ctx.fillText(bloco.vidas, 540, 68);         // Exibe a quantidade de vidas
     
     if(estadoAtual == estados.jogando)          // O jogo está em execução?
-        obstaculos.desenha();                   // DESENHANDO OS OBSTACULOS
+        obstaculos.desenha();                   // DESENHA OS OBSTACULOS
 
-    chao.desenha();                             // DESENHANDO O CHAO
-    bloco.desenha();                            // DESENHANDO O BLOCO
+    chao.desenha();                             // DESENHA O CHAO
+    bloco.desenha();                            // DESENHA O BLOCO
     
-    if(estadoAtual == estados.jogar)
-        jogar.desenha(
+    if(estadoAtual == estados.jogar)            // O jogo esta pronto para ser executado?
+        jogar.desenha(                          // Desenha a tela de inicio do jogo
             largura / 2 - jogar.largura / 2,
             altura / 2 - jogar.altura / 2
         );
 
-    if(estadoAtual == estados.perdeu){
-        perdeu.desenha(
+    if(estadoAtual == estados.perdeu){          // O jogo acabou?
+        perdeu.desenha(                         // Desenha a tela de encerramento (perdeu)
             largura / 2 - perdeu.largura / 2,
             altura / 2 - perdeu.altura / 2 - spriteRecord.altura/2
         );
 
-        spriteRecord.desenha(
+        spriteRecord.desenha(                   // Desenha o record obtido
             largura / 2 - spriteRecord.largura / 2,
             altura / 2 + perdeu.altura / 2 - spriteRecord.altura / 2 - 62
         );
@@ -238,14 +237,14 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
         ctx.font = "70px Oxanium";
         
 
-        if(bloco.score > record){
-            novo.desenha(largura / 2 - 200, altura / 2-15);
-            ctx.fillText(bloco.score, 385, 440);
+        if(bloco.score > record){               // O usuario bateu o recorde?
+            novo.desenha(largura / 2 - 200, altura / 2-15);             // Desenha a palavra NOVO se o usuario bater o recorde
+            ctx.fillText(bloco.score, 385, 440);                        // Mostra a pontuacao do jogador
         }
 
-        else{
-            ctx.fillText(record, 385, 440);
-            ctx.fillText(bloco.score, 385, 360);
+        else{                                   // O usuario não bateu o recorde?
+            ctx.fillText(record, 385, 440);     // Mostra o recorde atual
+            ctx.fillText(bloco.score, 385, 360);// Mostra a pontuacao
         }
     }
     
