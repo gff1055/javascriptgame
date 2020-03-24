@@ -18,6 +18,9 @@ estados = {                                     // Variavel recebe um array que 
     perdeu: 2                                   // O jogo acabou
 }
 
+pontosParaNovaFase = [5, 10, 15, 20],
+faseAtual = 0;
+
 
 chao = {                                        // DECLARANDO AS PROPRIEDADES DO CHAO
     y: 550,                                     // COORDENADA (y) ONDE O CHAO COMEÇA
@@ -32,7 +35,7 @@ chao = {                                        // DECLARANDO AS PROPRIEDADES DO
 
     desenha: function(){                        // FUNCAO PARA DESENHAR O CHAO
         spriteChao.desenha(this.x, this.y);     // Desenha o chao na posicao x,y
-        spriteChao.desenha(this.x + spriteChao.largura, this.y);        // Desenha o chao novamente
+        spriteChao.desenha(this.x + spriteChao.largura, this.y);    // Desenha o chao novamente
     },
 },
 
@@ -55,7 +58,7 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
     atualiza: function(){                       // ATUALIZA A VELOCIDADE E A COORDENADA y DO BLOCO (QUEDA)
         this.velocidade += this.gravidade;      // INCREMENTANDO A VELOCIDADE DE QUEDA COM O VALOR DA GRAVIDADE
         this.y += this.velocidade;              // MUDANDO O y COM O VALOR DA VELOCIDADE DE QUEDA
-        this.rotacao += Math.PI / 180 * velocidade;                     // o personagem sera rotacionado em um grau porporcionalmente a velocidade
+        this.rotacao += Math.PI / 180 * velocidade; // o personagem sera rotacionado em um grau porporcionalmente a velocidade
                                 
         /* MANTENDO O BLOCO NO CHAO */
         if(this.y > chao.y - this.altura        // Condicional caso o bloco chegue ao chao
@@ -87,6 +90,9 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
 
         this.score = 0;                         // Reseta o placar
         this.vidas = 3;                         // Reseta a quantidade de vidas
+
+        velocidade = 6;
+        faseAtual = 0;
     },
 
 
@@ -94,7 +100,7 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
         ctx.save();                             // Salva o contexto
         ctx.translate(this.x + this.largura / 2, this.y + this.altura / 2); // Desloca o contexto para a posicao indicada
         ctx.rotate(this.rotacao);               // Rotaciona o contexto
-        spriteBoneco.desenha(-this.largura / 2, -this.altura / 2);       // Desenha o boneco
+        spriteBoneco.desenha(-this.largura / 2, -this.altura / 2);  // Desenha o boneco
         ctx.restore();                          // Restaura o contexto a posicao original
     }
 
@@ -103,7 +109,8 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
 
 obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DOS OBSTACULOS
     _obs: [],                                   // ARRAY DE OBSTACULOS
-    cores: ["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"],         // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
+    _scored: false,
+    cores: ["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"], // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
     tempoInsere:0,                              // Variavel que ajuda no tempo inserção dos obstaculos
 
 
@@ -114,7 +121,7 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
             altura: 30 + Math.floor(120 * Math.random()),   // ALTURA DO OBSTACULO
             cor: this.cores[Math.floor(5 * Math.random())]  // COR DO OBSTACULO
         });
-        this.tempoInsere = 30 + Math.floor(20 * Math.random());         // Inicializando o temporizador dos obstaculos
+        this.tempoInsere = 30 + Math.floor(20 * Math.random()); // Inicializando o temporizador dos obstaculos
     },
 
 
@@ -126,7 +133,7 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
         else                                    // Se O temporizador ainda não é zero
             this.tempoInsere--;                 // Decrementando o temporizador
 
-        for(var i = 0, tam = this._obs.length; i < tam; i++){           // Rodando o array de obstaculos
+        for(var i = 0, tam = this._obs.length; i < tam; i++){   // Rodando o array de obstaculos
             var obs = this._obs[i];             // SELECIONANDO O ELEMENTO(OBSTACULO) ATUAL
             obs.x -= velocidade;                // DECREMENTANDO O VALOR DE X EM RELAÇÃO A VELOCIDADE DO OBSTACULO
 
@@ -147,8 +154,13 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
                     estadoAtual = estados.perdeu;   // O usuario perde o jogo
             }
             
-            else if(obs.x == 0)                 // O bloco pulou o obstaculo?
+            else if(obs.x <= 0 && !obs._scored){    // O bloco pulou o obstaculo?
                 bloco.score++;                  // O usuario marcou um ponto
+                obs._scored = true;
+
+                if(faseAtual < pontosParaNovaFase.length && bloco.score == pontosParaNovaFase[faseAtual])
+                    passarDeFase();
+            }
                                         
             else if(obs.x <= -obs.largura){     /** O obstaculo saiu da area de visao na tela? **/
                 this._obs.splice(i,1);          // Removendo o obstaculo do array
@@ -238,8 +250,8 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
         
 
         if(bloco.score > record){               // O usuario bateu o recorde?
-            novo.desenha(largura / 2 - 200, altura / 2-15);             // Desenha a palavra NOVO se o usuario bater o recorde
-            ctx.fillText(bloco.score, 385, 440);                        // Mostra a pontuacao do jogador
+            novo.desenha(largura / 2 - 200, altura / 2-15); // Desenha a palavra NOVO se o usuario bater o recorde
+            ctx.fillText(bloco.score, 385, 440);    // Mostra a pontuacao do jogador
         }
 
         else{                                   // O usuario não bateu o recorde?
@@ -277,14 +289,14 @@ function main(){                                // FUNÇÃO PRINCIPAL DO JOGO
     canvas.style.border = "1px solid #000";     // CRIANDO UMA BORDA PRETA PARA A CANVAS
     ctx = canvas.getContext("2d");              // TUDO O QUE FOR DESENHADO SERÁ 2D
     document.body.appendChild(canvas);          // ADICIONANDO A VARIAVEL CANVAS NO CORPO DO HTML
-    document.addEventListener("mousedown", clique);                     // CONFIGURANDO O EVENTO "clique"
+    document.addEventListener("mousedown", clique); // CONFIGURANDO O EVENTO "clique"
     estadoAtual = estados.jogar;                // O jogo esta pronto para ser iniciado (tela de inicio)
     record = localStorage.getItem("record");    // Acessando LOCALSTORAGE localStorage procurando pelo item RECORD e o atribui a variavel
 
     if(record == null)                          // Houve algum registro de recorde anterior?
         record = 0;                             // Resetando o recorde
 
-        img = new Image();                          // Instanciando uma nova imagem
+        img = new Image();                      // Instanciando uma nova imagem
     img.src = "imagens/sheet.png";              // Setando um caminho(src) para a imagem
 
     roda();                                     // RODANDO O JOGO
