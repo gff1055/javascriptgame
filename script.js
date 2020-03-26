@@ -21,6 +21,31 @@ estados = {                                     // Variavel recebe um array que 
 pontosParaNovaFase = [5, 10, 15, 20],
 faseAtual = 0;
 
+labelNovaFase = {
+    texto: "",
+    opacidade: 0.0,
+
+
+    fadeIn: function(dt){
+        var fadeInId = setInterval(function(){
+            if(labelNovaFase.opacidade < 1.0)
+                labelNovaFase.opacidade += 0.01;
+            else
+                clearInterval(fadeInId);
+        }, 10 * dt);
+    },
+
+
+    fadeOut: function(){
+        var fadeOutId = setInterval(function(){
+            if(labelNovaFase.opacidade > 0.0)
+                labelNovaFase.opacidade -= 0.01;
+            else
+                clearInterval(fadeOutId);
+        }, 10 * dt);
+    }
+}
+
 
 chao = {                                        // DECLARANDO AS PROPRIEDADES DO CHAO
     y: 550,                                     // COORDENADA (y) ONDE O CHAO COMEÇA
@@ -29,6 +54,7 @@ chao = {                                        // DECLARANDO AS PROPRIEDADES DO
     
     atualiza: function(){                       // Metodo para atualizar a posicao do chao (ilusao de movimento)
         this.x -= velocidade;                   // Decrementa o X de acordo com a velocidade
+        
         if(this.x <= -600)                      // Se o chao sair todo da canvas ele é resetado na pos x = 0
             this.x = 0;
     },
@@ -158,7 +184,8 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
                 bloco.score++;                  // O usuario marcou um ponto
                 obs._scored = true;
 
-                if(faseAtual < pontosParaNovaFase.length && bloco.score == pontosParaNovaFase[faseAtual])
+                if(faseAtual < pontosParaNovaFase.length
+                && bloco.score == pontosParaNovaFase[faseAtual])
                     passarDeFase();
             }
                                         
@@ -270,6 +297,13 @@ function roda(){                                // FUNCAO PARA RODAR O JOGO. OND
     atualiza();                                 // ATUALIZANDO O STATUS DO PERSONAGEM E BLOCOS
     desenha();                                  // DESENHANDO PERSONAGEM, BLOCOS, CHAO, ETC...
     window.requestAnimationFrame(roda);         // CHAMANDO A FUNÇÃO RODA DIRETO (LOOP)
+}
+
+
+function passarDeFase(){
+    velocidade++;
+    faseAtual++;
+    bloco.vidas++;
 }
 
 
