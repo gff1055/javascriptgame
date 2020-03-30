@@ -21,6 +21,7 @@ estados = {                                     // Variavel recebe um array que 
 pontosParaNovaFase = [5, 10, 15, 20],
 faseAtual = 0;
 
+
 labelNovaFase = {
     texto: "",
     opacidade: 0.0,
@@ -239,6 +240,7 @@ function atualiza(){                            // FUNCAO PARA ATUALIZAR O STATU
 }
 
 
+
 function desenha(){                             // FUNCAO USADA PARA DESENHAR (PERSONAGEM, BLOCOS, CHAO, ETC...) DEPOIS DE ATUALIZAR
     bg.desenha(0,0);                            // Desenha o fundo do jogo
 
@@ -248,6 +250,12 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
     ctx.fillText(bloco.score, 30, 68);          // Desenha o placar na tela
     ctx.fillStyle = "#000";                     // Cor do contador de vidas                     
     ctx.fillText(bloco.vidas, 540, 68);         // Exibe a quantidade de vidas
+    ctx.fillStyle=" rgba(0, 0, 0, " + labelNovaFase.opacidade + ")";
+    ctx.fillText(
+        labelNovaFase.texto,
+        canvas.width / 2 - ctx.measureText(labelNovaFase.texto).width / 2,
+        canvas.height / 3
+    );
     
     if(estadoAtual == estados.jogando)          // O jogo está em execução?
         obstaculos.desenha();                   // DESENHA OS OBSTACULOS
@@ -300,11 +308,21 @@ function roda(){                                // FUNCAO PARA RODAR O JOGO. OND
 }
 
 
+
 function passarDeFase(){
     velocidade++;
     faseAtual++;
     bloco.vidas++;
+
+    labelNovaFase.texto = "Level " + faseAtual;
+    labelNovaFase.fadeIn(0.4);
+
+    setTimeout(function(){
+        labelNovaFase.fadeOut(0.4)
+    }, 800);
+    
 }
+
 
 
 function main(){                                // FUNÇÃO PRINCIPAL DO JOGO
