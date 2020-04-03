@@ -18,35 +18,42 @@ estados = {                                     // Variavel recebe um array que 
     perdeu: 2                                   // O jogo acabou
 }
 
-pontosParaNovaFase = [5, 10, 15, 20],
-faseAtual = 0;
-
+pontosParaNovaFase = [5, 10, 15, 20],           // Array que vai carregar as pontuacoes para mudar de fase
+faseAtual = 0;                                  // Variavel que indica a fase atual baseado no array pontosParaNovaFase
 
 labelNovaFase = {
     texto: "",
     opacidade: 0.0,
 
-
     fadeIn: function(dt){
+
         var fadeInId = setInterval(function(){
+
             if(labelNovaFase.opacidade < 1.0)
                 labelNovaFase.opacidade += 0.01;
+
             else
                 clearInterval(fadeInId);
+
         }, 10 * dt);
+
     },
 
+    fadeOut: function(dt){
 
-    fadeOut: function(){
         var fadeOutId = setInterval(function(){
+
             if(labelNovaFase.opacidade > 0.0)
                 labelNovaFase.opacidade -= 0.01;
+
             else
                 clearInterval(fadeOutId);
-        }, 10 * dt);
-    }
-}
 
+        }, 10 * dt);
+
+    }
+
+}
 
 chao = {                                        // DECLARANDO AS PROPRIEDADES DO CHAO
     y: 550,                                     // COORDENADA (y) ONDE O CHAO COMEÇA
@@ -58,12 +65,15 @@ chao = {                                        // DECLARANDO AS PROPRIEDADES DO
         
         if(this.x <= -600)                      // Se o chao sair todo da canvas ele é resetado na pos x = 0
             this.x = 0;
+
+        console.log(this.x);
     },
 
     desenha: function(){                        // FUNCAO PARA DESENHAR O CHAO
         spriteChao.desenha(this.x, this.y);     // Desenha o chao na posicao x,y
         spriteChao.desenha(this.x + spriteChao.largura, this.y);    // Desenha o chao novamente
     },
+
 },
 
 
@@ -94,15 +104,16 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
             this.qntPulos = 0;                  // RESETANDO A COTA MAXIMA DE PULOS DO BLOCO
             this.velocidade = 0;                // Reseta a velocidade do bloco apos tocar o chao
         }
+
     },
 
-
     pula: function(){                           // METODO PARA FAZER O BLOCO PULAR
-        
+
         if(this.qntPulos < maxPulos){           // VERIFICANDO SE O BLOCO JA ATINGIU A COTA MAXIMA DE PULOS
             this.velocidade = -this.forcaDoPulo;// MUDANDO A VELOCIDADE DO BLOCO (RELATIVO A FORÇA DO PULO)
             this.qntPulos++;                    // AUMENTANDO A QUANTIDADE CADA VEZ QUE O BLOCO PULA
         }
+
     },
     
 
@@ -117,9 +128,9 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
 
         this.score = 0;                         // Reseta o placar
         this.vidas = 3;                         // Reseta a quantidade de vidas
-
-        velocidade = 6;
-        faseAtual = 0;
+        velocidade = 10;                         // Reseta a velocidade do bloco
+        faseAtual = 0;                          // Reseta as fases do jogo
+        this.gravidade = 1.6;                   // Reseta a gravidade
     },
 
 
@@ -136,18 +147,20 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
 
 obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DOS OBSTACULOS
     _obs: [],                                   // ARRAY DE OBSTACULOS
-    _scored: false,
+    _scored: false,                             // Flag que indica se o jogador pontuou em cima dele
     cores: ["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"], // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
     tempoInsere:0,                              // Variavel que ajuda no tempo inserção dos obstaculos
 
 
     insere: function(){                         // METODO PARA INSERIR UM ELEMENTO NO ARRAY DE OBSTACULOS
+
         this._obs.push({                        // INSERINDO O OBSTACULO NO ARRAY
             x: largura,                         // POSICAO X INICIAL
             largura: 50,                        // LARGURA DO OBSTACULO
             altura: 30 + Math.floor(120 * Math.random()),   // ALTURA DO OBSTACULO
             cor: this.cores[Math.floor(5 * Math.random())]  // COR DO OBSTACULO
         });
+
         this.tempoInsere = 30 + Math.floor(20 * Math.random()); // Inicializando o temporizador dos obstaculos
     },
 
@@ -181,11 +194,13 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
                     estadoAtual = estados.perdeu;   // O usuario perde o jogo
             }
             
-            else if(obs.x <= 0 && !obs._scored){    // O bloco pulou o obstaculo?
+            // Varificando se o bloco pulou o obstaculo
+            else if(obs.x <= 0                  // Se o obstaculo estiver saindo da tela
+            && !obs._scored){                   // ... e o jogador não pontuou em cima do obstaculo
                 bloco.score++;                  // O usuario marcou um ponto
-                obs._scored = true;
+                obs._scored = true;             // O obstaculo foi superado
 
-                if(faseAtual < pontosParaNovaFase.length
+                if(faseAtual < pontosParaNovaFase.length    // Verificia se foi atingido a pontuacao para passar de fase
                 && bloco.score == pontosParaNovaFase[faseAtual])
                     passarDeFase();
             }
@@ -204,16 +219,20 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
     },
 
     desenha: function(){                        // METODO PARA DESENHAR O OBSTACULO NA TELA
+
         for(var i = 0, tam = this._obs.length; i < tam; i++){   // PERCORRENDO O ARRAY PARA DESENHAR OS BLOCOS QUE ESTAO NO MESMO
             var obs = this._obs[i];
             ctx.fillStyle = obs.cor;            // MUDANDO A COR DO CONTEXTO DO BLOCO
             ctx.fillRect(obs.x, chao.y - obs.altura, obs.largura, obs.altura);  // DESENHANDO O BLOCO
         }
+
     }
+
 };
 
 
 function clique(evt){                           // FUNCAO QUE IDENTIFICA SE HOUVE CLIQUE
+
     if(estadoAtual == estados.jogando)          // O jogo esteja sendo executado?
         bloco.pula();                           // O bloco pula
 
@@ -231,6 +250,7 @@ function clique(evt){                           // FUNCAO QUE IDENTIFICA SE HOUV
 
 
 function atualiza(){                            // FUNCAO PARA ATUALIZAR O STATUS DO PERSONAGEM E DOS BLOCOS
+
     if(estadoAtual == estados.jogando)          // O jogo está executando?
         obstaculos.atualiza();                  // ATUALIZANDO O ESTADO DOS OBSTACULOS (VELOCIDADE)
     
@@ -251,6 +271,7 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
     ctx.fillStyle = "#000";                     // Cor do contador de vidas                     
     ctx.fillText(bloco.vidas, 540, 68);         // Exibe a quantidade de vidas
     ctx.fillStyle=" rgba(0, 0, 0, " + labelNovaFase.opacidade + ")";
+
     ctx.fillText(
         labelNovaFase.texto,
         canvas.width / 2 - ctx.measureText(labelNovaFase.texto).width / 2,
@@ -299,20 +320,19 @@ function desenha(){                             // FUNCAO USADA PARA DESENHAR (P
     
 }
 
-
 function roda(){                                // FUNCAO PARA RODAR O JOGO. ONDE VAI FICAR O LOOP, DESENHADO NA CANVAS
-
     atualiza();                                 // ATUALIZANDO O STATUS DO PERSONAGEM E BLOCOS
     desenha();                                  // DESENHANDO PERSONAGEM, BLOCOS, CHAO, ETC...
     window.requestAnimationFrame(roda);         // CHAMANDO A FUNÇÃO RODA DIRETO (LOOP)
 }
 
+function passarDeFase(){                        // Metodo que faz o jogo mudar de fase
+    velocidade++;                               // Aumenta a velocidade
+    faseAtual++;                                // Aumenta a fase atual
+    bloco.vidas++;                              // Aumenta a quantidade de vidas do bloco
 
-
-function passarDeFase(){
-    velocidade++;
-    faseAtual++;
-    bloco.vidas++;
+    if(faseAtual == 4)
+        bloco.gravidade *= 0.6;
 
     labelNovaFase.texto = "Level " + faseAtual;
     labelNovaFase.fadeIn(0.4);
@@ -323,10 +343,7 @@ function passarDeFase(){
     
 }
 
-
-
 function main(){                                // FUNÇÃO PRINCIPAL DO JOGO
-
     altura = window.innerHeight;                // RECEBENDO A ALTURA DA JANELA DO USUARIO
     largura = window.innerWidth;                // RECEBENDO A LARGURA DA JANELA DO USUARIO
 
@@ -348,9 +365,8 @@ function main(){                                // FUNÇÃO PRINCIPAL DO JOGO
     if(record == null)                          // Houve algum registro de recorde anterior?
         record = 0;                             // Resetando o recorde
 
-        img = new Image();                      // Instanciando uma nova imagem
+    img = new Image();                      // Instanciando uma nova imagem
     img.src = "imagens/sheet.png";              // Setando um caminho(src) para a imagem
-
     roda();                                     // RODANDO O JOGO
 }
 
