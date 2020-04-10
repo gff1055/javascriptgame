@@ -21,12 +21,11 @@ estados = {                                     // Variavel recebe um array que 
 pontosParaNovaFase = [5, 10, 15, 20],           // Array que vai carregar as pontuacoes para mudar de fase
 faseAtual = 0;                                  // Variavel que indica a fase atual baseado no array pontosParaNovaFase
 
-labelNovaFase = {
-    texto: "",
-    opacidade: 0.0,
+labelNovaFase = {                               // Objeto para estilizar a nova fase
+    texto: "",                                  // Texo a ser exibino na mudanca de fase
+    opacidade: 0.0,                             // gerencia a opacidade do elemento
 
-    fadeIn: function(dt){
-
+    fadeIn: function(dt){                       // Mostra o texto
         var fadeInId = setInterval(function(){
 
             if(labelNovaFase.opacidade < 1.0)
@@ -39,8 +38,7 @@ labelNovaFase = {
 
     },
 
-    fadeOut: function(dt){
-
+    fadeOut: function(dt){                      // O texto some da tela
         var fadeOutId = setInterval(function(){
 
             if(labelNovaFase.opacidade > 0.0)
@@ -66,7 +64,7 @@ chao = {                                        // DECLARANDO AS PROPRIEDADES DO
         if(this.x <= -600)                      // Se o chao sair todo da canvas ele é resetado na pos x = 0
             this.x = 0;
 
-        console.log(this.x);
+        
     },
 
     desenha: function(){                        // FUNCAO PARA DESENHAR O CHAO
@@ -148,7 +146,14 @@ bloco = {                                       // DECLARANDO AS PROPRIEDADES DO
 obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DOS OBSTACULOS
     _obs: [],                                   // ARRAY DE OBSTACULOS
     _scored: false,                             // Flag que indica se o jogador pontuou em cima dele
-    cores: ["#ffbc1c","#ff1c1c","#ff85e1","#52a7ff","#78ff5d"], // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
+    sprites: [                                  // ARRAY QUE POSSUI AS CORES A  SEREM UTILIZADAS NOS OBSTACULOS
+        redObstacle,
+        pinkObstacle,
+        blueObstacle,
+        greenObstacle,
+        yellowObstacle
+    ], 
+    
     tempoInsere:0,                              // Variavel que ajuda no tempo inserção dos obstaculos
 
 
@@ -158,7 +163,7 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
             x: largura,                         // POSICAO X INICIAL
             largura: 50,                        // LARGURA DO OBSTACULO
             altura: 30 + Math.floor(120 * Math.random()),   // ALTURA DO OBSTACULO
-            cor: this.cores[Math.floor(5 * Math.random())]  // COR DO OBSTACULO
+            sprite: this.sprites[Math.floor(this.sprite.length * Math.random())]  // COR DO OBSTACULO
         });
 
         this.tempoInsere = 30 + Math.floor(20 * Math.random()); // Inicializando o temporizador dos obstaculos
