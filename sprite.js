@@ -1,15 +1,14 @@
 
-function Sprite(x, y, largura, altura){			// Classe para gerenciar as sprites
+function Sprite(x, y, largura, altura){			// CLASSE PARA GERENCIAR AS SPRITES
 	this.x = x;									// Coordenada inicial X
 	this.y = y;									// Coordenada inicial Y
 	this.largura = largura;						// Largura da imagem
 	this.altura = altura;						// Altura da imagem
 
 	
-	this.desenha =  function(xCanvas, yCanvas){	// Metodo para desenhar a area selecionada
+	this.desenha =  function(xCanvas, yCanvas){	// METODO PARA DESENHAR NA AREA INDICADA NO CANVAS
 
-		// Desenhar uma imagem na tela
-		ctx.drawImage(
+		ctx.drawImage(							// DESENHA A IMAGEM NA TELA
 			img,								// Imagem a ser desenhada
 			this.x, this.y,						// Coordenadas iniciais da imagem
 			this.largura, this.altura,			// largura e altura da imagem
@@ -29,8 +28,8 @@ perdeu = new Sprite(610, 490, 397, 358),		// Instancia a sprite para a tela quan
 jogar = new Sprite(610, 100, 397, 347),			// Instancia a sprite para a tela de inicio de jogo
 
 
-redObstacle = new Sprite(500, 825, 50, 125);
-pinkObstacle = new Sprite(600, 825, 50, 125);
-blueObstacle = new Sprite(700, 825, 50, 125);
-greenObstacle = new Sprite(800, 825, 50, 125);
-yellowObstacle = new Sprite(900, 825, 50, 125);
+redObstacle = new Sprite(500, 825, 50, 125),	// instancia a sprite para o obstaculo vermelho
+pinkObstacle = new Sprite(600, 825, 50, 125),	// instancia a sprite para o obstaculo rosa
+blueObstacle = new Sprite(700, 825, 50, 125),	// instancia a sprite para o obstaculo azul
+greenObstacle = new Sprite(800, 825, 50, 125),	// instancia a sprite para o obstaculo verde
+yellowObstacle = new Sprite(900, 825, 50, 125);	// instancia a sprite para o obstaculo amarelo

@@ -161,9 +161,9 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
 
         this._obs.push({                        // INSERINDO O OBSTACULO NO ARRAY
             x: largura,                         // POSICAO X INICIAL
+            y: chao.y - Math.floor(20 + Math.random() * 100),   // Altura do obstaculo
             largura: 50,                        // LARGURA DO OBSTACULO
-            altura: 30 + Math.floor(120 * Math.random()),   // ALTURA DO OBSTACULO
-            sprite: this.sprites[Math.floor(this.sprite.length * Math.random())]  // COR DO OBSTACULO
+            sprite: this.sprites[Math.floor(this.sprites.length * Math.random())]  // array de obstaculos
         });
 
         this.tempoInsere = 30 + Math.floor(20 * Math.random()); // Inicializando o temporizador dos obstaculos
@@ -227,8 +227,7 @@ obstaculos = {                                  // DECLARANDO AS PROPRIEDADES DO
 
         for(var i = 0, tam = this._obs.length; i < tam; i++){   // PERCORRENDO O ARRAY PARA DESENHAR OS BLOCOS QUE ESTAO NO MESMO
             var obs = this._obs[i];
-            ctx.fillStyle = obs.cor;            // MUDANDO A COR DO CONTEXTO DO BLOCO
-            ctx.fillRect(obs.x, chao.y - obs.altura, obs.largura, obs.altura);  // DESENHANDO O BLOCO
+            obs.sprite.desenha(obs.x, obs.y);   // Desenha o obstaculo
         }
 
     }
